@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Teste de Integração SDK</title>
+</head>
+<body>
+    <h1>Simulação de E-commerce</h1>
+    <button onclick="realizarPagamento()">Pagar R$ 99,90</button>
+    <p>Status: <span id="status">Aguardando...</span></p>
+
+    <script>
+        function coletarDadosDeSeguranca() {
+            console.log('Coletando fingerprint e dados comportamentais...');
+            // Simula a coleta de dados de segurança
+            return {
+                browser: 'Chrome',
+                os: 'Windows',
+                timestamp: Date.now()
+            };
+        }
+
+        async function realizarPagamento() {
+            document.getElementById('status').innerText = 'Processando...';
+            
+            const securityPayload = coletarDadosDeSeguranca();
+            const transactionData = {
+                userId: 'user-123',
+                amount: 99.90
+            };
+
+            try {
+                // Endpoint aponta para o IP da sua VM na rede local.
+                // Lembre-se de substituir <IP_DA_VM> pelo IP correto.
+                const response = await fetch('http:localhost:4444/api/process-payment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        securityPayload,
+                        transactionData
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Erro na requisição: ${response.statusText}`);
+                }
+
+                const result = await response.json();
+                document.getElementById('status').innerText = `Resultado: ${result.message}`;
+
+            } catch (error) {
+                console.error('Erro:', error);
+                document.getElementById('status').innerText = 'Erro na comunicação com o servidor.';
+            }
+        }
+    </script>
+
+</body>
+</html>
