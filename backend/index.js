@@ -2,7 +2,6 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
-const rateLimit = require('express-rate-limit');
 
 // Middlewares
 const fingerprintMiddleware = require('./middleware/fingerprintMiddleware');
@@ -20,13 +19,7 @@ const app = express();
 app.use(helmet());
 app.use(cors());
 
-// Rate limiting
-const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutos
-    max: 100, // máximo 100 requests por IP
-    message: { error: 'Too many requests, please try again later' }
-});
-app.use(limiter);
+
 
 // Parsing
 app.use(express.json({ limit: '10mb' }));
